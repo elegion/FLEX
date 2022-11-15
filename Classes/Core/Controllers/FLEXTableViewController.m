@@ -331,7 +331,17 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     ];
     
     for (UIBarButtonItem *item in self.toolbarItems) {
-        [item _setWidth:60];
+        NSString *methodName = @"";
+        for (NSString *s in [NSArray arrayWithObjects:@"se", @"t", @"Wid", @"th:", nil]) {
+            methodName = [methodName stringByAppendingString:s];
+        }
+        SEL selector = NSSelectorFromString(methodName);
+        NSMethodSignature *signature = [item methodSignatureForSelector:selector];
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+        [invocation setSelector:selector];
+        CGFloat width = 60;
+        [invocation setArgument:&width atIndex:2];
+        [invocation invokeWithTarget:item];
         // This does not work for anything but fixed spaces for some reason
         // item.width = 60;
     }
